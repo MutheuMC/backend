@@ -1,4 +1,4 @@
-const { findById } = require('../models/category');
+// const { findById } = require('../models/category');
 const User = require('../models/user')
 const bcrypt = require('bcrypt');
 
@@ -18,7 +18,7 @@ module.exports.createUser = async(req, res)=>{
         res.status(409).send({"message":"User already exists.You can login"})
     }else{
         const hashedPassword = bcrypt.hashSync(req.body.password, saltRounds)
-        const user = await new User({...req.body, password:hashedPassword}).save();
+        const user = await new User({...req.body, password:hashedPassword, blogs: [] }).save();
         res.status(201).send({"message":"New User Created"});
     }
 

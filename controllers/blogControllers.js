@@ -1,5 +1,8 @@
 
-const Blog =  require('../models/blog')
+const  mongoose  = require('mongoose');
+const Blog =  require('../models/blog');
+const User = require('../models/user')
+
 module.exports.getBlogs = async(req, res)=>{
     let blogs
 
@@ -27,8 +30,35 @@ module.exports.getBlog= async(req, res)=>{
 }
 
 module.exports.createBlog = async(req, res)=>{
+    let existingUser
     try{
-        const blog = await Blog({...req.body}).save();
+        existingUser = await User.findById(req.body.user).select('blogs').exec()
+    }catch(err){
+        console.log(err);
+        return res.status(500).send({message: "Internal server error"})
+    }
+
+    if(!existingUser){
+        res.status(404).send({message: "User does not exist"})
+    }
+
+    const blog = new Blog({...req.body})
+    // const existingUser = await findOne({})
+    try{
+        const session = await mongoose.startSession()
+        session.startTransaction()
+        await  blog.save({session})
+
+        if (!existingUser.blogs) {
+            existingUser.blogs = [];
+            }
+
+
+        existingUser.blogs.push(blog)
+        await existingUser.save({session})
+        await session.commitTransaction();
+
+        // const blog = await Blog({...req.body}).save();
         if (blog){
             res.status(200).send("New blog created")
         }
