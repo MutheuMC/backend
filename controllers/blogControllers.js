@@ -32,8 +32,6 @@ module.exports.createBlog = async(req, res)=>{
         if (blog){
             res.status(200).send("New blog created")
         }
-
-
     }catch(err){
         console.log(err);
         res.status(500).send("Internal server Error");
