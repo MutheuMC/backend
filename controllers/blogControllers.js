@@ -30,42 +30,26 @@ module.exports.getBlog= async(req, res)=>{
 }
 
 module.exports.createBlog = async(req, res)=>{
-    let existingUser
-    try{
-        existingUser = await User.findById(req.body.user).select('blogs').exec()
-    }catch(err){
-        console.log(err);
-        return res.status(500).send({message: "Internal server error"})
-    }
+    const userId = req.body.user
 
-    if(!existingUser){
-        res.status(404).send({message: "User does not exist"})
-    }
+    const user = await User.findById({"_id": userId})
+    console.log(user)
 
-    const blog = new Blog({...req.body})
-    // const existingUser = await findOne({})
-    try{
-        const session = await mongoose.startSession()
-        session.startTransaction()
-        await  blog.save({session})
+    const new_blog = new Blog({
+        title:req.body.title,
+        description:req.body.description,
+        content: req.body.content,
+        user: userId
 
-        if (!existingUser.blogs) {
-            existingUser.blogs = [];
-            }
+    })
 
+    const savedBlog = await new_blog.save()
 
-        existingUser.blogs.push(blog)
-        await existingUser.save({session})
-        await session.commitTransaction();
+    user.blogs.push(savedBlog._id);
+    await user.save();
 
-        // const blog = await Blog({...req.body}).save();
-        if (blog){
-            res.status(200).send("New blog created")
-        }
-    }catch(err){
-        console.log(err);
-        res.status(500).send("Internal server Error");
-    }
+    res.status(201).json(savedBlog);
+
 }
 
 module.exports.updateBlog = async(req, res)=>{
@@ -87,7 +71,7 @@ module.exports.updateBlog = async(req, res)=>{
     try{
         const updatedBlog = await Blog.findByIdAndUpdate({"_id":blogId}, {$set: updateFields},{new:true});
         if (!updatedBlog){
-            res.status(404).send("Cnnot update the blog");
+            res.status(404).send("Cannot update the blog");
 
         }
         res.status(200).send({updatedBlog})

@@ -23,7 +23,7 @@ const userSchema = new mongoose.Schema({
         required:true,
         minlength:10,
     },
-    blog:[{type:mongoose.Types.ObjectId, ref:"Blog", required:true}]
+    blogs:[{type:mongoose.Types.ObjectId, ref:"Blog", required:true}]
 },
     {timestamps: true})
 

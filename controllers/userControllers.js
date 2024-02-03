@@ -1,4 +1,5 @@
 // const { findById } = require('../models/category');
+const Blog = require('../models/blog');
 const User = require('../models/user')
 const bcrypt = require('bcrypt');
 
@@ -62,4 +63,15 @@ module.exports.updateUser = async(req, res)=>{
         console.error('Error updating user:', err);
         return  res.status(500).send('Internal Server Error');
     }
+}
+module.exports.getUserBlogs = async(req, res)=>{
+    let blogs;
+    try{
+        blogs = await User.find({"_id":req.query.id})
+        
+    }catch(err){
+        console.log(err)
+    }
+
+    return res.status(200).send({blogs})
 }
