@@ -4,6 +4,8 @@ const dotenv = require('dotenv').config();
 const router = require('./routes/userRoutes')
 const adminRouter = require('./routes/adminRoutes')
 const blogRouter = require('./routes/blogRoutes')
+const categoriesRouter = require('./routes/categoryRoutes')
+
 
 
 const app = express()
@@ -12,6 +14,8 @@ app.use(express.json())
 app.use(router)
 app.use('/admin',adminRouter)
 app.use('/blog', blogRouter)
+app.use('/categories', categoriesRouter)
+
 
 mongoose.connect(process.env.DB_URI)
 .then(()=>{

@@ -65,13 +65,14 @@ module.exports.updateUser = async(req, res)=>{
     }
 }
 module.exports.getUserBlogs = async(req, res)=>{
-    let blogs;
     try{
-        blogs = await User.find({"_id":req.query.id})
+        const user = await User.findById({"_id":req.body.id}).populate('blogs')
+        
+        return res.status(200).json(user.blogs)
         
     }catch(err){
         console.log(err)
     }
 
-    return res.status(200).send({blogs})
+
 }

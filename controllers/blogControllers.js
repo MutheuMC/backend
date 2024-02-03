@@ -3,6 +3,7 @@ const  mongoose  = require('mongoose');
 const Blog =  require('../models/blog');
 const User = require('../models/user')
 
+
 module.exports.getBlogs = async(req, res)=>{
     let blogs
 
@@ -33,13 +34,14 @@ module.exports.createBlog = async(req, res)=>{
     const userId = req.body.user
 
     const user = await User.findById({"_id": userId})
-    console.log(user)
+    
 
     const new_blog = new Blog({
         title:req.body.title,
         description:req.body.description,
         content: req.body.content,
-        user: userId
+        user: userId,
+        categories:req.body.category
 
     })
 
