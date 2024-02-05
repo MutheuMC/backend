@@ -1,7 +1,10 @@
 // const { findById } = require('../models/category');
+const jwt = require('jsonwebtoken')
 const Blog = require('../models/blog');
 const User = require('../models/user')
 const bcrypt = require('bcrypt');
+
+const secretKey = process.env.SECRET_KEY
 
 const saltRounds = 10
 //routes for admins
@@ -26,8 +29,7 @@ module.exports.createUser = async(req, res)=>{
 }
 module.exports.logUser = async(req, res)=>{
     const {email, password} = req.body
-    let user
-
+    let user;
     try{
         user = await User.findOne({email})
         if (user){
@@ -37,6 +39,9 @@ module.exports.logUser = async(req, res)=>{
                     console.log(err)
                 }
                 if(result){
+                    const accessToken = jwt.sign({userId:user._id}, secretKey , {expiresIn: '15m'})
+                    res.cookie('accessToken', accessToken, {httpOnly:true})
+
                     res.status(200).send("logged in succesfully");
                 }else{
                     res.status(401).send("incorrect password");

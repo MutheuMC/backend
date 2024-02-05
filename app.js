@@ -1,16 +1,18 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv').config();
+const cookieParser = require('cookie-parser')
+
 const router = require('./routes/userRoutes')
 const adminRouter = require('./routes/adminRoutes')
 const blogRouter = require('./routes/blogRoutes')
 const categoriesRouter = require('./routes/categoryRoutes')
 
-
-
 const app = express()
 
-app.use(express.json())
+app.use(express.json());
+app.use(cookieParser);
+
 app.use(router)
 app.use('/admin',adminRouter)
 app.use('/blog', blogRouter)
