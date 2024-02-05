@@ -30,6 +30,10 @@ blogSchema.pre('save', function(next){
     this.updatedAt = new Date();
     next();
 })
+//validation of data
+// blogSchema.pre('save', function(next){
+
+// })
 
 
 const Blog = mongoose.model('Blog', blogSchema)

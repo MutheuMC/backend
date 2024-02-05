@@ -8,6 +8,9 @@ dist/
 # Ignore environment-specific files
 .env
 
+#todo text
+todo.docx
+
 # Ignore log files
 *.log
 
