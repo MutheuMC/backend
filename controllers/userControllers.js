@@ -95,5 +95,31 @@ module.exports.logout = async(req, res)=> {
 }
 
 module.exports.deleteAccount = async(req, res)=>{
-    console.log("account deleted")
+    // console.log("account deleted")
+
+    const userID = req.body.id
+
+    try{
+        const user = await User.findById({'_id': userID}).populate('blogs');
+        
+        if(!user){
+            res.status(404).json({error: "User does not exist"})
+        }
+            console.log("user found")
+        for (const blog of user.blogs){
+            await Blog.findByIdAndDelete(blog._id);
+
+
+        }
+        console.log("blogs deleted")
+
+
+
+        await User.findByIdAndDelete(userID)
+
+        res.status(200).send("Account deleted successfully")
+    }catch(err){
+        console.log(err);
+        res.status(500).send("Internal server error");
+    }
 }
