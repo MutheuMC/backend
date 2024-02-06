@@ -7,6 +7,24 @@ const bcrypt = require('bcrypt');
 const secretKey = process.env.SECRET_KEY
 
 const saltRounds = 10
+
+module.exports.authenticateJWT = async(req, res , next)=>{
+    const token = req.cookie.accessToken
+
+    if(!token){
+        res.status(401).send("Log In");
+    }
+
+    jwt.verify(token , secretKey, (err, user) => {
+        if(err){
+            return  res.send("403")
+        }
+
+        // req.user = user
+        next();
+
+    });
+}
 //routes for admins
 
 module.exports.createUser = async(req, res)=>{
@@ -32,23 +50,12 @@ module.exports.logUser = async(req, res)=>{
     let user;
     try{
         user = await User.findOne({email})
-        if (user){
-            const comparePassword = bcrypt.compareSync(password, user.password, function(err, result)
-            {
-                if (err){
-                    console.log(err)
-                }
-                if(result){
-                    const accessToken = jwt.sign({userId:user._id}, secretKey , {expiresIn: '15m'})
-                    res.cookie('accessToken', accessToken, {httpOnly:true})
 
-                    res.status(200).send("logged in succesfully");
-                }else{
-                    res.status(401).send("incorrect password");
-                }
-            })
-        }else{
-            res.status(404).send("User does not exist");
+        const passwordVerify = bcrypt.compareSync(password, user.password)
+        if (passwordVerify){
+            const accessToken = jwt.sign({'_id':user._id}, secretKey, {expiresIn: '15m'});
+            res.cookie('accessToken', accessToken, { httpOnly: true });
+            res.status(200).send("logged In Successfully")
         }
     }catch(err){
         console.log(err)
@@ -80,4 +87,9 @@ module.exports.getUserBlogs = async(req, res)=>{
     }
 
 
+}
+
+module.exports.logout = async(req, res)=> {
+    res.clearCookie('accessToken');
+    res.send("logged out");
 }
