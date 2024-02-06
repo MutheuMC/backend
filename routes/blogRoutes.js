@@ -8,5 +8,6 @@ blogRoutes.get('/blogs', blogControllers.getBlogs)
 blogRoutes.get('/blog/:id', blogControllers.getBlog)
 blogRoutes.post('/add',blogControllers.createBlog)
 blogRoutes.put('/update/:id', blogControllers.updateBlog)
+blogRoutes.post('/delete', blogControllers.deletBlog);
 
 module.exports = blogRoutes

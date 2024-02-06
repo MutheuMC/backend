@@ -84,3 +84,14 @@ module.exports.updateBlog = async(req, res)=>{
         res.status(500).send("Internal server Error");
     }
 }
+
+module.exports.deletBlog = async(req, res) =>{
+    try{
+        const blog = await Blog.findByIdAndDelete({'_id': req.body.id});
+
+        res.status(200).send("Blog deleted")
+
+    }catch(err){
+        console.log(err)
+    }
+}
