@@ -93,3 +93,7 @@ module.exports.logout = async(req, res)=> {
     res.clearCookie('accessToken');
     res.send("logged out");
 }
+
+module.exports.deleteAccount = async(req, res)=>{
+    console.log("account deleted")
+}
